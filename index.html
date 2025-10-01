@@ -1,86 +1,86 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Çarpım Oyunu</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <style>
-    body, html { margin:0; padding:0; width:100%; height:100%; font-family:sans-serif; background:#1e1e1e; color:#fff; box-sizing:border-box; overflow:hidden; }
+<meta charset="UTF-8">
+<title>Çarpım Oyunu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+body, html { margin:0; padding:0; width:100%; height:100%; font-family:sans-serif; background:#1e1e1e; color:#fff; box-sizing:border-box; overflow:hidden; }
+/* Başlangıç ekranı */
+.login-screen { position:absolute; top:0; left:0; width:100%; height:100%; background:#111; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:10; text-align:center; }
+.login-title { text-align:center; margin-bottom:20px; display:flex; justify-content:center; flex-wrap:wrap; }
+.login-title span { display:inline-block; font-size:2.5em; font-weight:bold; margin:0 5px; transition:transform 0.3s; }
+.login-title span:hover { transform:scale(1.2) rotate(0deg); }
+.login-screen input { font-size:1.2em; padding:10px; margin-bottom:20px; border-radius:8px; border:none; width:250px; text-align:center; }
+.login-screen button { font-size:1.2em; padding:10px 20px; background:#00aaff; border:none; border-radius:8px; color:white; cursor:pointer; }
+/* Ana oyun ekranı */
+.container { display:flex; height:100%; flex-direction:row; }
+.sidebar { width:200px; background:#333; padding:10px; display:flex; flex-direction:column; gap:5px; overflow-y:auto; }
+.sidebar label { display:flex; align-items:center; gap:5px; font-size:1em; cursor:pointer; }
+.sidebar input[type="checkbox"] { transform:scale(1.2); }
+.main { flex:1; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+.header h2 { font-size:2em; margin:0; text-align:center; }
+.header h3 { font-size:1em; margin:5px 0 15px; color:#ffcc00; text-align:center; }
+.scoreboard { position:absolute; top:10px; right:10px; text-align:right; font-size:1em; display:flex; flex-direction:column; gap:5px; }
+#question { font-size:4em; margin-bottom:20px; text-align:center; }
+#question.animate-once { animation:pulse 0.6s ease-in-out 1; }
+@keyframes pulse { from{transform:scale(1);opacity:0.8;} to{transform:scale(1.2);opacity:1;} }
+.options { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap; justify-content:center; }
+.option { background:#00aaff; border:none; padding:15px 25px; font-size:1.5em; border-radius:8px; cursor:pointer; color:white; }
+.option:hover { background:#0077cc; }
+.timer { margin-top:10px; font-size:2em; color:#ffdd57; }
+#feedback { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:5em; opacity:0; pointer-events:none; }
+@keyframes pop { 0%{transform:translate(-50%,-50%) scale(0);opacity:0;}50%{transform:translate(-50%,-50%) scale(1.5);opacity:1;}100%{transform:translate(-50%,-50%) scale(1);opacity:0;} }
+.feedback-show { animation:pop 0.6s ease-out; }
+#restartContainer { margin-top:20px; display:none; }
+#restartBtn { font-size:1.5em; padding:10px 20px; background:#28a745; border:none; border-radius:8px; color:white; cursor:pointer; }
+/* Footer + Oturum Kayıtları Ortalı */
+.footer-container { position:fixed; bottom:10px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:5px; z-index:100; text-align:center; }
+.footer-container .records-link a { color:#00aaff; text-decoration:none; font-weight:bold; font-size:1em; }
+.footer-container .records-link a:hover { text-decoration:underline; }
+.footer-container .footer { font-size:0.9em; color:#aaa; }
 
-    .login-screen { position:absolute; top:0; left:0; width:100%; height:100%; background:#111; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:10; text-align:center; }
-    .login-title { text-align:center; margin-bottom:20px; display:flex; justify-content:center; flex-wrap:wrap; }
-    .login-title span { display:inline-block; font-size:2.5em; font-weight:bold; margin:0 5px; transition:transform 0.3s; }
-    .login-title span:hover { transform:scale(1.2) rotate(0deg); }
-    .login-screen input { font-size:1.2em; padding:10px; margin-bottom:20px; border-radius:8px; border:none; width:250px; text-align:center; }
-    .login-screen button { font-size:1.2em; padding:10px 20px; background:#00aaff; border:none; border-radius:8px; color:white; cursor:pointer; }
+.overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; }
+.records-modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; color:#000; padding:15px; border-radius:8px; max-width:90%; max-height:80%; overflow-y:auto; z-index:1001; }
+.records-modal h2 { margin-top:0; }
+.records-modal table { width:100%; border-collapse:collapse; margin-top:10px; }
+.records-modal th, .records-modal td { border:1px solid #ccc; padding:5px; text-align:center; font-size:0.9em; }
+.records-modal button.close-btn { background:#e74c3c; border:none; color:#fff; padding:5px 10px; border-radius:4px; cursor:pointer; float:right; }
 
-    .container { display:flex; height:100%; flex-direction:row; }
-    .sidebar { width:200px; background:#333; padding:10px; display:flex; flex-direction:column; gap:5px; overflow-y:auto; }
-    .sidebar label { display:flex; align-items:center; gap:5px; font-size:1em; cursor:pointer; }
-    .sidebar input[type="checkbox"] { transform:scale(1.2); }
-    .main { flex:1; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
-    .header h2 { font-size:2em; margin:0; text-align:center; }
-    .header h3 { font-size:1em; margin:5px 0 15px; color:#ffcc00; text-align:center; }
-    .scoreboard { position:absolute; top:10px; right:10px; text-align:right; font-size:1em; display:flex; flex-direction:column; gap:5px; }
-    #question { font-size:4em; margin-bottom:20px; text-align:center; }
-    #question.animate-once { animation:pulse 0.6s ease-in-out 1; }
-    @keyframes pulse { from{transform:scale(1);opacity:0.8;} to{transform:scale(1.2);opacity:1;} }
-    .options { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap; justify-content:center; }
-    .option { background:#00aaff; border:none; padding:15px 25px; font-size:1.5em; border-radius:8px; cursor:pointer; color:white; }
-    .option:hover { background:#0077cc; }
-    .timer { margin-top:10px; font-size:2em; color:#ffdd57; }
-    #feedback { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:5em; opacity:0; pointer-events:none; }
-    @keyframes pop { 0%{transform:translate(-50%,-50%) scale(0);opacity:0;}50%{transform:translate(-50%,-50%) scale(1.5);opacity:1;}100%{transform:translate(-50%,-50%) scale(1);opacity:0;} }
-    .feedback-show { animation:pop 0.6s ease-out; }
-    #restartContainer { margin-top:20px; display:none; }
-    #restartBtn { font-size:1.5em; padding:10px 20px; background:#28a745; border:none; border-radius:8px; color:white; cursor:pointer; }
+@media (max-width:480px){
+  .container { flex-direction:column; }
+  .sidebar { width:100%; flex-direction:row; flex-wrap:wrap; justify-content:center; }
+  .main { padding:10px; }
+  #question { font-size:3em; }
+  .option { font-size:1.2em; padding:10px 15px; margin:3px; }
+  .timer { font-size:1.5em; }
+  .login-title span { font-size:1.8em; margin:0 2px; }
+  .scoreboard { top:5px; right:5px; font-size:0.9em; }
+}
 
-    .footer-container { position:fixed; bottom:10px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:5px; z-index:100; text-align:center; }
-    .footer-container .records-link a { color:#00aaff; text-decoration:none; font-weight:bold; font-size:1em; }
-    .footer-container .records-link a:hover { text-decoration:underline; }
-    .footer-container .footer { font-size:0.9em; color:#aaa; }
+#countdownOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); color:white; display:flex; justify-content:center; align-items:center; font-size:6em; z-index:2000; display:none; flex-direction:column; }
 
-    .overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; }
-    .records-modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; color:#000; padding:15px; border-radius:8px; max-width:90%; max-height:80%; overflow-y:auto; z-index:1001; }
-    .records-modal h2 { margin-top:0; }
-    .records-modal table { width:100%; border-collapse:collapse; margin-top:10px; }
-    .records-modal th, .records-modal td { border:1px solid #ccc; padding:5px; text-align:center; font-size:0.9em; }
-    .records-modal button.close-btn { background:#e74c3c; border:none; color:#fff; padding:5px 10px; border-radius:4px; cursor:pointer; float:right; }
-
-    @media (max-width:480px){
-      .container { flex-direction:column; }
-      .sidebar { width:100%; flex-direction:row; flex-wrap:wrap; justify-content:center; }
-      .main { padding:10px; }
-      #question { font-size:3em; }
-      .option { font-size:1.2em; padding:10px 15px; margin:3px; }
-      .timer { font-size:1.5em; }
-      .login-title span { font-size:1.8em; margin:0 2px; }
-      .scoreboard { top:5px; right:5px; font-size:0.9em; }
-    }
-
-    #countdownOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); color:white; display:flex; justify-content:center; align-items:center; font-size:6em; z-index:2000; display:none; flex-direction:column; }
-
-    /* Doğru cevabı gösterme */
-    #reminder {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 6em;
-      color: #fff;
-      background: rgba(0,0,0,0.85);
-      padding: 40px 80px;
-      border-radius: 20px;
-      opacity: 0;
-      transition: opacity 0.3s;
-      z-index: 9999;
-      text-align: center;
-      pointer-events: none;
-    }
-  </style>
+/* --- YENİ EKLEME: Yanlışta doğru cevabı gösterme --- */
+#reminder {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  font-size:5em;
+  font-weight:bold;
+  background: rgba(0,0,0,0.7);
+  color:#fff;
+  padding: 20px 40px;
+  border-radius: 10px;
+  text-align:center;
+  z-index:1500;
+  opacity:0;
+  max-width:90%;
+  word-wrap: break-word;
+}
+</style>
 </head>
 <body>
-
 <div class="login-screen" id="loginScreen">
   <div class="login-title" id="titleLine1"></div>
   <div class="login-title" id="titleLine2"></div>
@@ -101,6 +101,7 @@
     </div>
     <h1 id="question">?</h1>
     <div id="feedback"></div>
+    <div id="reminder"></div>
     <div class="options" id="options"></div>
     <div class="timer">⏱️ <span id="timerValue">5</span>s</div>
     <div id="restartContainer"><button id="restartBtn" onclick="restartGame()">Yeniden Başla</button></div>
@@ -113,23 +114,13 @@
 </div>
 
 <div id="countdownOverlay"></div>
-<div id="reminder"></div>
 
 <script>
 document.addEventListener("DOMContentLoaded",()=>{
   const colors=["#e74c3c","#8e44ad","#f1c40f","#2ecc71","#3498db","#e67e22","#1abc9c","#d35400","#c0392b","#16a085"];
   function randomColor(){return colors[Math.floor(Math.random()*colors.length)];}
   function randomRotation(){return (Math.random()*30-15)+"deg";}
-  function renderLine(text,id){
-    const c=document.getElementById(id);
-    text.split("").forEach(ch=>{
-      const s=document.createElement("span");
-      s.textContent=ch;
-      s.style.color=randomColor();
-      s.style.transform=`rotate(${randomRotation()})`;
-      c.appendChild(s);
-    });
-  }
+  function renderLine(text,id){const c=document.getElementById(id); text.split("").forEach(ch=>{const s=document.createElement("span"); s.textContent=ch; s.style.color=randomColor(); s.style.transform=`rotate(${randomRotation()})`; c.appendChild(s);});}
   renderLine("MATEMATİK DEHALARI ","titleLine1");
   renderLine("ÇARPIM TABLOSU","titleLine2");
 });
@@ -138,146 +129,47 @@ let correctCount=0,wrongCount=0,correctAnswer,currentA,currentB,username="",time
 const feedbackEl=document.getElementById("feedback");
 const reminderEl=document.getElementById("reminder");
 
+// Sidebar 1-5 varsayılan seçili
 const sidebar=document.getElementById("sidebar");
-for(let i=1;i<=10;i++){
-  const label=document.createElement("label");
-  const cb=document.createElement("input"); 
-  cb.type="checkbox"; 
-  cb.value=i; 
-  if(i<=5) cb.checked=true; 
-  label.appendChild(cb); 
-  label.appendChild(document.createTextNode(i)); 
-  sidebar.appendChild(label);
-}
-document.addEventListener("change",e=>{
-  if(e.target.matches(".sidebar input[type='checkbox']") && document.getElementById("gameContainer").style.display==="flex") generateQuestion();
-});
+for(let i=1;i<=10;i++){const label=document.createElement("label"); const cb=document.createElement("input"); cb.type="checkbox"; cb.value=i; if(i<=5) cb.checked=true; label.appendChild(cb); label.appendChild(document.createTextNode(i)); sidebar.appendChild(label);}
+document.addEventListener("change",e=>{if(e.target.matches(".sidebar input[type='checkbox']") && document.getElementById("gameContainer").style.display==="flex") generateQuestion();});
 
 function getSelectedNumbers(){return Array.from(document.querySelectorAll(".sidebar input[type='checkbox']:checked")).map(cb=>parseInt(cb.value,10));}
 
-function showFeedback(isCorrect){
-  feedbackEl.textContent = isCorrect ? "✓" : "✗";
-  feedbackEl.style.color = isCorrect ? "#4CAF50" : "#F44336";
-  feedbackEl.classList.add("feedback-show");
-  feedbackEl.addEventListener("animationend", ()=>{
-    feedbackEl.classList.remove("feedback-show");
-  }, {once:true});
-}
+function showFeedback(isCorrect){feedbackEl.textContent=isCorrect?"✓":"✗"; feedbackEl.style.color=isCorrect?"#4CAF50":"#F44336"; feedbackEl.classList.add("feedback-show"); feedbackEl.addEventListener("animationend",()=>feedbackEl.classList.remove("feedback-show"),{once:true});}
 
+// --- Yeni fonksiyon: Yanlış cevabı hatırlatma ---
 function showReminder(a,b,result,callback){
   clearInterval(timerInterval);
   reminderEl.textContent = `${a} × ${b} = ${result}`;
-  reminderEl.style.opacity = "1";
-  showFeedback(false);
+  reminderEl.style.opacity = 1;
   setTimeout(()=>{
-    reminderEl.style.opacity = "0";
-    setTimeout(callback,300);
-  },2000);
+    reminderEl.style.opacity = 0;
+    callback();
+  },1500);
 }
 
-function generateQuestion(){
-  clearInterval(timerInterval); 
-  timerCount=5; 
-  document.getElementById("timerValue").textContent=timerCount; 
-  const nums=getSelectedNumbers(); 
-  const qEl=document.getElementById("question"); 
-  const opts=document.getElementById("options"); 
-  if(nums.length===0){qEl.textContent="Lütfen en az bir sayı seçin"; opts.innerHTML=""; return;} 
-  currentA=nums[Math.floor(Math.random()*nums.length)]; 
-  currentB=Math.floor(Math.random()*10)+1; 
-  correctAnswer=currentA*currentB; 
-  qEl.textContent=`${currentA} × ${currentB}`; 
-  qEl.classList.remove("animate-once"); 
-  void qEl.offsetWidth; 
-  qEl.classList.add("animate-once"); 
-  const set=new Set([correctAnswer]); 
-  while(set.size<4) set.add(Math.floor(Math.random()*100)+1); 
-  opts.innerHTML=""; 
-  Array.from(set).sort(()=>Math.random()-0.5).forEach(ans=>{
-    const btn=document.createElement("button"); 
-    btn.className="option"; 
-    btn.textContent=ans; 
-    btn.onclick=()=>checkAnswer(parseInt(ans,10)); 
-    opts.appendChild(btn);
-  });
-  timerInterval=setInterval(()=>{
-    timerCount--; 
-    document.getElementById("timerValue").textContent=timerCount; 
-    if(timerCount===0){ clearInterval(timerInterval); timeUp(); }
-  },1000);
-}
-
-function timeUp(){
-  wrongCount++;
-  document.getElementById("wrong").textContent = wrongCount;
-  showReminder(currentA,currentB,correctAnswer,()=>{
-    if(wrongCount>=5) return endGame();
-    generateQuestion();
-  });
-}
+function generateQuestion(){clearInterval(timerInterval); timerCount=5; document.getElementById("timerValue").textContent=timerCount; const nums=getSelectedNumbers(); const qEl=document.getElementById("question"); const opts=document.getElementById("options"); if(nums.length===0){qEl.textContent="Lütfen en az bir sayı seçin"; opts.innerHTML=""; return;} currentA=nums[Math.floor(Math.random()*nums.length)]; currentB=Math.floor(Math.random()*10)+1; correctAnswer=currentA*currentB; qEl.textContent=`${currentA} × ${currentB}`; qEl.classList.remove("animate-once"); void qEl.offsetWidth; qEl.classList.add("animate-once"); const set=new Set([correctAnswer]); while(set.size<4)set.add(Math.floor(Math.random()*100)+1); opts.innerHTML=""; Array.from(set).sort(()=>Math.random()-0.5).forEach(ans=>{const btn=document.createElement("button"); btn.className="option"; btn.textContent=ans; btn.onclick=()=>checkAnswer(parseInt(ans,10)); opts.appendChild(btn);}); timerInterval=setInterval(()=>{timerCount--; document.getElementById("timerValue").textContent=timerCount; if(timerCount===0){clearInterval(timerInterval); wrongCount++; document.getElementById("wrong").textContent=wrongCount; showFeedback(false); if(wrongCount>=5) return endGame(); showReminder(currentA,currentB,correctAnswer,generateQuestion);}},1000);}
 
 function checkAnswer(selected){
-  clearInterval(timerInterval); 
-  const isRight = selected === correctAnswer;
-  if(isRight){
-    correctCount++;
-    document.getElementById("correct").textContent = correctCount;
-    showFeedback(true);
-    generateQuestion();
-  } else {
-    wrongCount++;
-    document.getElementById("wrong").textContent = wrongCount;
-    showReminder(currentA,currentB,correctAnswer,()=>{
-      if(wrongCount>=5) return endGame();
-      generateQuestion();
-    });
+  clearInterval(timerInterval);
+  const isRight=selected===correctAnswer;
+  if(isRight){correctCount++; document.getElementById("correct").textContent=correctCount;} else{wrongCount++; document.getElementById("wrong").textContent=wrongCount;}
+  showFeedback(isRight);
+  if(!isRight && wrongCount<5){
+    showReminder(currentA,currentB,correctAnswer,generateQuestion);
+    return;
   }
+  if(wrongCount>=5) return endGame();
+  generateQuestion();
 }
 
-function saveSummary(){
-  if(!username||summarySaved) return; 
-  const key="mathSummary"; 
-  const all=JSON.parse(localStorage.getItem(key)||"{}"); 
-  if(!all[username]) all[username]=[]; 
-  all[username].push({date:new Date().toLocaleString(), correct:correctCount, wrong:wrongCount}); 
-  localStorage.setItem(key,JSON.stringify(all)); 
-  summarySaved=true;
-}
-
-function endGame(){
-  clearInterval(timerInterval); 
-  saveSummary(); 
-  alert("Oyun bitti! 5 yanlış yaptınız."); 
-  document.getElementById("question").textContent="Oyun Bitti!"; 
-  document.getElementById("options").innerHTML=""; 
-  document.getElementById("restartContainer").style.display="block";
-}
-
+function saveSummary(){if(!username||summarySaved) return; const key="mathSummary"; const all=JSON.parse(localStorage.getItem(key)||"{}"); if(!all[username]) all[username]=[]; all[username].push({date:new Date().toLocaleString(), correct:correctCount, wrong:wrongCount}); localStorage.setItem(key,JSON.stringify(all)); summarySaved=true;}
+function endGame(){clearInterval(timerInterval); saveSummary(); alert("Oyun bitti! 5 yanlış yaptınız."); document.getElementById("question").textContent="Oyun Bitti!"; document.getElementById("options").innerHTML=""; document.getElementById("restartContainer").style.display="block";}
 window.addEventListener("beforeunload",saveSummary);
-
-function restartGame(){
-  document.getElementById("gameContainer").style.display="none"; 
-  document.getElementById("loginScreen").style.display="flex";
-}
-
-function showSummary(e){
-  e.preventDefault(); 
-  if(!username) return; 
-  const summary=JSON.parse(localStorage.getItem("mathSummary")||"{}")[username]||[]; 
-  if(!summary.length) return alert("Henüz oturum kaydı yok."); 
-  const overlay=document.createElement("div"); 
-  overlay.className="overlay"; overlay.id="overlay"; document.body.appendChild(overlay); 
-  const modal=document.createElement("div"); 
-  modal.className="records-modal"; modal.id="recordsModal"; 
-  let html=`<button class="close-btn" onclick="closeModal()">Kapat</button><h2>${username} - Oturum Kayıtları</h2><table><thead><tr><th>Tarih/Saat</th><th>Doğru</th><th>Yanlış</th></tr></thead><tbody>`; 
-  summary.forEach(r=>html+=`<tr><td>${r.date}</td><td>${r.correct}</td><td>${r.wrong}</td></tr>`); 
-  html+="</tbody></table>"; modal.innerHTML=html; document.body.appendChild(modal);
-}
-
-function closeModal(){
-  document.getElementById("overlay").remove(); 
-  document.getElementById("recordsModal").remove();
-}
+function restartGame(){document.getElementById("gameContainer").style.display="none"; document.getElementById("loginScreen").style.display="flex";}
+function showSummary(e){e.preventDefault(); if(!username) return; const summary=JSON.parse(localStorage.getItem("mathSummary")||"{}")[username]||[]; if(!summary.length) return alert("Henüz oturum kaydı yok."); const overlay=document.createElement("div"); overlay.className="overlay"; overlay.id="overlay"; document.body.appendChild(overlay); const modal=document.createElement("div"); modal.className="records-modal"; modal.id="recordsModal"; let html=`<button class="close-btn" onclick="closeModal()">Kapat</button><h2>${username} - Oturum Kayıtları</h2><table><thead><tr><th>Tarih/Saat</th><th>Doğru</th><th>Yanlış</th></tr></thead><tbody>`; summary.forEach(r=>html+=`<tr><td>${r.date}</td><td>${r.correct}</td><td>${r.wrong}</td></tr>`); html+="</tbody></table>"; modal.innerHTML=html; document.body.appendChild(modal);}
+function closeModal(){document.getElementById("overlay").remove(); document.getElementById("recordsModal").remove();}
 
 function startCountdown(){
   username=document.getElementById("usernameInput").value.trim();
@@ -285,32 +177,11 @@ function startCountdown(){
   if(username.toLowerCase()==="yunus fırat"){localStorage.removeItem("mathSummary"); alert("Tüm kayıtlar silindi (Yönetici girişi)");}
   const overlay=document.getElementById("countdownOverlay"); overlay.style.display="flex";
   let count=3;
-  const interval=setInterval(()=>{
-    if(count>0){ overlay.textContent=count; }
-    else if(count===0){ overlay.textContent="BAŞLA!"; }
-    else{ clearInterval(interval); overlay.style.display="none"; startGame(); }
-    count--;
-  },1000);
+  const interval=setInterval(()=>{if(count>0){ overlay.textContent=count; } else if(count===0){ overlay.textContent="BAŞLA!"; } else{ clearInterval(interval); overlay.style.display="none"; startGame(); } count--;},1000);
 }
 
-function startGame(){
-  document.getElementById("loginScreen").style.display="none"; 
-  document.getElementById("gameContainer").style.display="flex"; 
-  resetSession(); 
-  generateQuestion();
-}
-
-function resetSession(){
-  clearInterval(timerInterval); 
-  correctCount=0; wrongCount=0; summarySaved=false; 
-  document.getElementById("correct").textContent="0"; 
-  document.getElementById("wrong").textContent="0"; 
-  document.getElementById("restartContainer").style.display="none"; 
-  document.querySelectorAll(".sidebar input[type=checkbox]").forEach(cb=>{
-    if(cb.value<=5) cb.checked=true; else cb.checked=false;
-  });
-}
+function startGame(){document.getElementById("loginScreen").style.display="none"; document.getElementById("gameContainer").style.display="flex"; resetSession(); generateQuestion();}
+function resetSession(){clearInterval(timerInterval); correctCount=0; wrongCount=0; summarySaved=false; document.getElementById("correct").textContent="0"; document.getElementById("wrong").textContent="0"; document.getElementById("restartContainer").style.display="none"; document.querySelectorAll(".sidebar input[type=checkbox]").forEach(cb=>{if(cb.value<=5) cb.checked=true; else cb.checked=false;});}
 </script>
-
 </body>
 </html>
